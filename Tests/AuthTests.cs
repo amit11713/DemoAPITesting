@@ -7,6 +7,7 @@ using Microsoft.Extensions.Logging;
 namespace DemoAPITesting.Tests;
 
 [TestFixture]
+[Category("Functional")]
 [Parallelizable(ParallelScope.Self)]
 public class AuthTests
 {

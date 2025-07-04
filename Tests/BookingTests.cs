@@ -9,6 +9,7 @@ using System.Runtime.InteropServices;
 namespace DemoAPITesting.Tests;
 
 [TestFixture]
+[Category("Functional")]
 [Parallelizable(ParallelScope.Self)]
 public class BookingTests
 {
