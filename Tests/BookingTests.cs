@@ -9,23 +9,35 @@ using System.Runtime.InteropServices;
 namespace DemoAPITesting.Tests;
 
 [TestFixture]
+[Parallelizable(ParallelScope.Self)]
 public class BookingTests
 {
     private IRestfulBookerClient _client = null!;
     private ILogger<BookingTests> _logger = null!;
     private string _authToken = string.Empty;
+    private IServiceScope _scope = null!;
 
-    [OneTimeSetUp]
-    public async Task OneTimeSetUp()
+    [SetUp]
+    public async Task Setup()
     {
-        var serviceProvider = TestSetup.ServiceProvider;
-        _client = serviceProvider.GetRequiredService<IRestfulBookerClient>();
-        _logger = serviceProvider.GetRequiredService<ILogger<BookingTests>>();
+        _scope = TestSetup.ServiceProvider.CreateScope();
+        _client = _scope.ServiceProvider.GetRequiredService<IRestfulBookerClient>();
+        _logger = _scope.ServiceProvider.GetRequiredService<ILogger<BookingTests>>();
+        
+        // Perform health check for each test to ensure API is available
         var isHealthy = await _client.HealthCheckAsync();
         Assert.That(isHealthy, Is.True, "API health check failed");
-        var apiSettings = serviceProvider.GetRequiredService<DemoAPITesting.Configurations.ApiSettings>();
+        
+        // Get authentication token for each test to ensure thread safety
+        var apiSettings = _scope.ServiceProvider.GetRequiredService<DemoAPITesting.Configurations.ApiSettings>();
         _authToken = await _client.CreateTokenAsync(apiSettings.Username, apiSettings.Password);
         Assert.That(_authToken, Is.Not.Empty, "Failed to create authentication token");
+    }
+
+    [TearDown]
+    public void TearDown()
+    {
+        _scope?.Dispose();
     }
 
     /// <summary>

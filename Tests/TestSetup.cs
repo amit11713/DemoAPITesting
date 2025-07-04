@@ -33,7 +33,7 @@ public class TestSetup
         services.AddSingleton(apiSettings);
         // Configure logging and register API client
         services.ConfigureLogging(configuration);
-        services.AddSingleton<IRestfulBookerClient, RestfulBookerClient>();
+        services.AddScoped<IRestfulBookerClient, RestfulBookerClient>();
         // Build the service provider and assign it for global use
         _disposableProvider = services.BuildServiceProvider() as ServiceProvider;
         ServiceProvider = _disposableProvider;

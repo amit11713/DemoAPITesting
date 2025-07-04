@@ -7,17 +7,25 @@ using Microsoft.Extensions.Logging;
 namespace DemoAPITesting.Tests;
 
 [TestFixture]
+[Parallelizable(ParallelScope.Self)]
 public class AuthTests
 {
     private IRestfulBookerClient _client = null!;
     private ILogger<AuthTests> _logger = null!;
+    private IServiceScope _scope = null!;
 
     [SetUp]
     public void Setup()
     {
-        var serviceProvider = TestSetup.ServiceProvider;
-        _client = serviceProvider.GetRequiredService<IRestfulBookerClient>();
-        _logger = serviceProvider.GetRequiredService<ILogger<AuthTests>>();
+        _scope = TestSetup.ServiceProvider.CreateScope();
+        _client = _scope.ServiceProvider.GetRequiredService<IRestfulBookerClient>();
+        _logger = _scope.ServiceProvider.GetRequiredService<ILogger<AuthTests>>();
+    }
+
+    [TearDown]
+    public void TearDown()
+    {
+        _scope?.Dispose();
     }
     
     /// <summary>
@@ -27,7 +35,7 @@ public class AuthTests
     public async Task CreateToken_WithValidCredentials_ShouldReturnToken()
     {
         _logger.LogInformation("{Class}.{Method}: Test Started", nameof(AuthTests), nameof(CreateToken_WithValidCredentials_ShouldReturnToken));
-        var apiSettings = TestSetup.ServiceProvider.GetRequiredService<DemoAPITesting.Configurations.ApiSettings>();
+        var apiSettings = _scope.ServiceProvider.GetRequiredService<DemoAPITesting.Configurations.ApiSettings>();
         var token = await _client.CreateTokenAsync(apiSettings.Username, apiSettings.Password);
         //Console.WriteLine($"Token received: {token}");
         Assert.That(token, Is.Not.Empty, "Token should not be empty");
