@@ -8,6 +8,7 @@ namespace DemoAPITesting.Tests;
 /// Tests specifically for verifying the separate log file functionality.
 /// </summary>
 [TestFixture]
+[Category("Unit")]
 [Parallelizable(ParallelScope.Self)]
 public class LoggingTests
 {
