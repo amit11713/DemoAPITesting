@@ -12,3 +12,6 @@ TestResults/
 
 ## Ignore VS Code specific files
 .vscode/
+
+## Ignore log files generated during test execution
+Logs/

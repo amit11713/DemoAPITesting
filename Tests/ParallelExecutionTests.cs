@@ -10,6 +10,7 @@ namespace DemoAPITesting.Tests;
 /// Tests to verify that parallel execution is working correctly with thread safety
 /// </summary>
 [TestFixture]
+[Category("Unit")]
 [Parallelizable(ParallelScope.Self)]
 public class ParallelExecutionTests
 {
