@@ -1,55 +1,196 @@
 # DemoAPITesting
-Automated tests for the Restful Booker API using .NET 9, NUnit, RestSharp, and Serilog.
 
-# Restful Booker API Test Automation
+Comprehensive automated test suite for the Restful Booker API using .NET 8.0, NUnit, RestSharp, and Serilog with advanced parallel execution capabilities.
 
-This project contains automated tests for the Restful Booker API (https://restful-booker.herokuapp.com/).
+## Overview
 
-## Features
+This project contains automated tests for the [Restful Booker API](https://restful-booker.herokuapp.com/) with a focus on reliability, performance, and maintainability. The test suite demonstrates modern .NET testing practices including parallel execution, structured logging, dependency injection, and resilient HTTP communication.
 
-- **Test Framework**: NUnit for structuring and running tests
-- **HTTP Client**: RestSharp for making API requests
-- **Resilience & Retry**: Polly for automatic retry of transient failures
-- **Test Data Generation**: Bogus for generating realistic fake data
-- **Logging**: Serilog for comprehensive logging
+## Key Features
 
-## Project Structure
+- **Test Framework**: NUnit 4.2.2 with parallel execution support
+- **HTTP Client**: RestSharp 110.2.0 for API communication
+- **Resilience & Retry**: Polly 8.2.0 for automatic retry of transient failures
+- **Test Data Generation**: Bogus 35.0.1 for generating realistic fake data
+- **Logging**: Serilog 4.0.0 with structured logging and per-test log files
+- **Dependency Injection**: Microsoft.Extensions.DependencyInjection for service management
+- **Parallel Execution**: Thread-safe test execution with proper resource isolation
+- **Configuration Management**: JSON-based configuration with environment-specific settings
 
-- **Tests**: Contains all test classes organized by API resource
-- **Models**: Data models representing API resources
-- **Clients**: API client for interacting with the Restful Booker API
-- **Utilities**: Helper classes for test data generation and retry policies
-- **Configurations**: Configuration classes and settings
+## Architecture
+
+### Project Structure
+
+```
+DemoAPITesting/
+├── Clients/                    # API client implementations
+│   ├── IRestfulBookerClient.cs    # Client interface
+│   └── RestfulBookerClient.cs     # Main API client with retry logic
+├── Configurations/             # Configuration classes
+│   ├── ApiSettings.cs            # API endpoint and auth settings
+│   └── LoggingConfiguration.cs   # Serilog configuration
+├── Models/                     # Data models
+│   ├── Booking.cs               # Main booking entity
+│   ├── BookingDates.cs         # Date range model
+│   └── TokenResponse.cs        # Authentication response
+├── Tests/                      # Test implementations
+│   ├── AuthTests.cs            # Authentication tests
+│   ├── BookingTests.cs         # CRUD operation tests
+│   ├── LoggingTests.cs         # Logging verification tests
+│   ├── ParallelExecutionTests.cs # Parallel execution validation
+│   └── TestSetup.cs            # DI container setup
+├── Utilities/                  # Helper classes
+│   ├── DateOnlyJsonConverter.cs  # JSON serialization support
+│   ├── RetryPolicyFactory.cs     # Polly retry policy factory
+│   ├── TestDataGenerator.cs      # Bogus-based test data generation
+│   └── TestNameEnricher.cs       # Serilog test name enrichment
+└── Properties/
+    └── AssemblyInfo.cs         # NUnit parallel execution configuration
+```
+
+### Test Categories
+
+- **Unit**: Isolated component tests (e.g., parallel execution validation)
+- **Functional**: API integration tests (e.g., authentication, CRUD operations)
 
 ## Setup Instructions
 
 ### Prerequisites
 
-- .NET 9 SDK
-- An IDE (e.g., Visual Studio 2022, Visual Studio Code, JetBrains Rider)
+- **.NET 8.0 SDK** or higher
+- An IDE (Visual Studio 2022, Visual Studio Code, JetBrains Rider)
+- Internet connection for API access
 
 ### Installation
 
-1. Clone the repository
-2. Open the solution in your IDE
-3. Restore NuGet packages
-dotnet restore
+1. **Clone the repository**
+   ```bash
+   git clone <repository-url>
+   cd DemoAPITesting
+   ```
+
+2. **Restore NuGet packages**
+   ```bash
+   dotnet restore
+   ```
+
+3. **Build the solution**
+   ```bash
+   dotnet build
+   ```
+
 ### Configuration
 
-Modify the `appsettings.json` file to configure:
+The `appsettings.json` file contains all configuration settings:
 
-- API base URL
-- Authentication credentials
-- Retry policy settings
-- Logging options
+```json
+{
+  "ApiSettings": {
+    "BaseUrl": "https://restful-booker.herokuapp.com",
+    "Username": "admin",
+    "Password": "password123",
+    "MaxRetries": 3,
+    "RetryDelayInMilliseconds": 1000
+  },
+  "Serilog": {
+    "MinimumLevel": {
+      "Default": "Information"
+    }
+  }
+}
+```
+
+**Configuration Options:**
+- `BaseUrl`: Restful Booker API endpoint
+- `Username/Password`: Authentication credentials
+- `MaxRetries`: Number of retry attempts for failed requests
+- `RetryDelayInMilliseconds`: Base delay between retries (exponential backoff)
 
 ## Running Tests
 
-### Using Visual Studio
+### Command Line
 
-1. Open the Test Explorer
-2. Click "Run All" to execute all tests
-
-### Using Command Line
+```bash
+# Run all tests
 dotnet test
+
+# Run tests with detailed output
+dotnet test --verbosity normal
+
+# Run specific test category
+dotnet test --filter Category=Unit
+dotnet test --filter Category=Functional
+```
+
+### Visual Studio
+
+1. Open **Test Explorer** (Test → Test Explorer)
+2. Click **Run All** to execute all tests
+3. Use filters to run specific test categories
+
+### Expected Results
+
+- **Unit Tests**: Should always pass (no external dependencies)
+- **Functional Tests**: May fail if the external API is unavailable
+
+## Parallel Execution
+
+This project implements advanced parallel test execution for improved performance. See [PARALLEL_EXECUTION.md](PARALLEL_EXECUTION.md) for detailed information about:
+
+- Assembly and fixture-level parallelization
+- Thread-safe dependency injection
+- Service scoping per test
+- Authentication token isolation
+
+## Logging
+
+The project uses Serilog for comprehensive logging with the following features:
+
+- **Per-test log files**: Each test writes to its own log file in the `Logs/` directory
+- **Structured logging**: Consistent format with class and method names
+- **Thread enrichment**: Logs include thread IDs for parallel execution debugging
+- **Multiple sinks**: Console output and file-based logging
+
+Log files are created as: `Logs/test-{TestName}.log`
+
+## Troubleshooting
+
+### Common Issues
+
+1. **API Connection Failures**
+   - The Restful Booker API (herokuapp.com) may be temporarily unavailable
+   - Check API status at: https://restful-booker.herokuapp.com/ping
+   - Functional tests will fail if the API is down
+
+2. **Package Vulnerability Warnings**
+   - RestSharp 110.2.0 has a known moderate severity vulnerability
+   - This is a test project and the vulnerability doesn't affect functionality
+   - Consider updating to a newer version if available
+
+3. **Test Execution Timeouts**
+   - Increase retry delay in `appsettings.json` if experiencing network issues
+   - Check firewall settings for outbound HTTPS connections
+
+### Debug Information
+
+- Log files in `Logs/` directory contain detailed execution information
+- Use `--verbosity normal` with `dotnet test` for detailed output
+- Parallel execution information is logged in `ParallelExecutionTests`
+
+## Contributing
+
+When contributing to this project:
+
+1. Follow the existing code style and patterns
+2. Ensure all new tests have appropriate XML documentation
+3. Use dependency injection for all services
+4. Follow the Arrange-Act-Assert pattern for tests
+5. Add structured logging with class and method names
+6. Ensure thread safety for parallel execution compatibility
+
+## Security Notes
+
+- Default credentials are used for demonstration purposes
+- No sensitive data should be committed to the repository
+- API credentials are stored in `appsettings.json` for testing only
 
