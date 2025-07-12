@@ -1,6 +1,7 @@
 using Microsoft.Extensions.DependencyInjection;
 using NUnit.Framework;
 using DemoAPITesting.Clients;
+using DemoAPITesting.Configurations;
 using System.Runtime.InteropServices;
 using Microsoft.Extensions.Logging;
 
@@ -36,7 +37,7 @@ public class AuthTests
     public async Task CreateToken_WithValidCredentials_ShouldReturnToken()
     {
         _logger.LogInformation("{Class}.{Method}: Test Started", nameof(AuthTests), nameof(CreateToken_WithValidCredentials_ShouldReturnToken));
-        var apiSettings = _scope.ServiceProvider.GetRequiredService<DemoAPITesting.Configurations.ApiSettings>();
+        var apiSettings = _scope.ServiceProvider.GetRequiredService<ApiSettings>();
         var token = await _client.CreateTokenAsync(apiSettings.Username, apiSettings.Password);
         //Console.WriteLine($"Token received: {token}");
         Assert.That(token, Is.Not.Empty, "Token should not be empty");
