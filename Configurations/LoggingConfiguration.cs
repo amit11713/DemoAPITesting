@@ -22,7 +22,7 @@ public static class LoggingConfiguration
             .ReadFrom.Configuration(configuration)
             .Enrich.With<TestNameEnricher>()
             .Enrich.WithThreadId()
-            .WriteTo.Console(outputTemplate: "[{Timestamp:HH:mm:ss} {Level:u3}] {Message:lj}{NewLine}{Exception}")
+            .WriteTo.Console(outputTemplate: "[{Timestamp:HH:mm:ss.fff} {Level:u3}] {Message:lj}{NewLine}{Exception}")
             .WriteTo.Map(
                 keyPropertyName: "TestName",
                 configure: (testName, wt) => wt.File($"Logs/test-{testName}.log",

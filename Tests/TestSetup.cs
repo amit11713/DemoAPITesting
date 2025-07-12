@@ -21,22 +21,26 @@ public class TestSetup
     [OneTimeSetUp]
     public void RunBeforeAnyTests()
     {
-        // Load configuration from appsettings.json
-        var configuration = new ConfigurationBuilder()
+        // Only initialize if not already initialized
+        if (ServiceProvider == null)
+        {
+            // Load configuration from appsettings.json
+            var configuration = new ConfigurationBuilder()
             .AddJsonFile("appsettings.json")
             .Build();
 
-        var services = new ServiceCollection();
-        services.AddSingleton<IConfiguration>(configuration);
-        // Register ApiSettings as singleton from configuration
-        var apiSettings = configuration.GetSection("ApiSettings").Get<ApiSettings>() ?? new ApiSettings();
-        services.AddSingleton(apiSettings);
-        // Configure logging and register API client
-        services.ConfigureLogging(configuration);
-        services.AddScoped<IRestfulBookerClient, RestfulBookerClient>();
-        // Build the service provider and assign it for global use
-        _disposableProvider = services.BuildServiceProvider() as ServiceProvider;
-        ServiceProvider = _disposableProvider;
+            var services = new ServiceCollection();
+            services.AddSingleton<IConfiguration>(configuration);
+            // Register ApiSettings as singleton from configuration
+            var apiSettings = configuration.GetSection("ApiSettings").Get<ApiSettings>() ?? new ApiSettings();
+            services.AddSingleton(apiSettings);
+            // Configure logging and register API client
+            services.ConfigureLogging(configuration);
+            services.AddScoped<IRestfulBookerClient, RestfulBookerClient>();
+            // Build the service provider and assign it for global use
+            _disposableProvider = services.BuildServiceProvider() as ServiceProvider;
+            ServiceProvider = _disposableProvider;
+        }
     }
 
     /// <summary>
@@ -45,6 +49,11 @@ public class TestSetup
     [OneTimeTearDown]
     public void Cleanup()
     {
-        _disposableProvider?.Dispose();
+        if (_disposableProvider != null)
+        {
+            _disposableProvider?.Dispose();
+            _disposableProvider = null;
+            ServiceProvider = null!;
+        }
     }
 }

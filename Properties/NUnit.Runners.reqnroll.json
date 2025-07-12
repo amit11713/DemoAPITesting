@@ -1,0 +1,11 @@
+{
+  "reqnroll": {
+    "unitTestProvider": {
+      "name": "NUnit"
+    },
+    "runtime": {
+      "stopAtFirstError": false,
+      "testThreadCount": 4
+    }
+  }
+}

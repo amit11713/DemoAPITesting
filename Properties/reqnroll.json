@@ -1,0 +1,14 @@
+{
+  "reqnroll": {
+    "runtime": {
+      "parallelExecutionMode": "scenario", //"feature\",
+      "maxThreadCount": 4,
+      "stopAtFirstError": false
+    },
+    "trace": {
+      "traceSuccessfulSteps": true,
+      "traceTimings": true,
+      "stepDefinitionSkeletonStyle": "AsyncAwait"
+    }
+  }
+}
