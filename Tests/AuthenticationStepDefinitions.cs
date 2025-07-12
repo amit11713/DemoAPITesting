@@ -6,7 +6,7 @@ using Reqnroll;
 using System;
 using System.Threading.Tasks;
 
-namespace ApiTestingProject.Tests.StepDefinitions
+namespace DemoAPITesting.Tests.StepDefinitions
 {
     [Binding]
     public class AuthenticationStepDefinitions
