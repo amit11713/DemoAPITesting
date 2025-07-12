@@ -24,28 +24,38 @@ This project contains automated tests for the [Restful Booker API](https://restf
 ```
 DemoAPITesting/
 ├── Clients/                    # API client implementations
-│   ├── IRestfulBookerClient.cs    # Client interface
-│   └── RestfulBookerClient.cs     # Main API client with retry logic
+│   ├── IRestfulBookerClient.cs        # Client interface
+│   └── RestfulBookerClient.cs         # Main API client with retry logic
 ├── Configurations/             # Configuration classes
-│   ├── ApiSettings.cs            # API endpoint and auth settings
-│   └── LoggingConfiguration.cs   # Serilog configuration
+│   ├── ApiSettings.cs                # API endpoint and auth settings
+│   └── LoggingConfiguration.cs       # Serilog configuration
 ├── Models/                     # Data models
-│   ├── Booking.cs               # Main booking entity
-│   ├── BookingDates.cs         # Date range model
-│   └── TokenResponse.cs        # Authentication response
+│   ├── Booking.cs                   # Main booking entity
+│   ├── BookingDates.cs               # Date range model
+│   └── TokenResponse.cs              # Authentication response
 ├── Tests/                      # Test implementations
-│   ├── AuthTests.cs            # Authentication tests
-│   ├── BookingTests.cs         # CRUD operation tests
-│   ├── LoggingTests.cs         # Logging verification tests
-│   ├── ParallelExecutionTests.cs # Parallel execution validation
-│   └── TestSetup.cs            # DI container setup
+│   ├── AuthTests.cs                  # Authentication tests
+│   ├── BookingTests.cs               # CRUD operation tests
+│   ├── LoggingTests.cs               # Logging verification tests
+│   ├── ParallelExecutionTests.cs     # Parallel execution validation
+│   ├── AuthenticationStepDefinitions.cs # BDD step definitions for authentication
+│   ├── Hooks.cs                      # Reqnroll/NUnit hooks for test lifecycle
+│   ├── Support/ServiceRegistration.cs # DI container setup for BDD scenarios
+│   └── TestSetup.cs                  # DI container setup for NUnit tests
 ├── Utilities/                  # Helper classes
-│   ├── DateOnlyJsonConverter.cs  # JSON serialization support
-│   ├── RetryPolicyFactory.cs     # Polly retry policy factory
-│   ├── TestDataGenerator.cs      # Bogus-based test data generation
-│   └── TestNameEnricher.cs       # Serilog test name enrichment
-└── Properties/
-    └── AssemblyInfo.cs         # NUnit parallel execution configuration
+│   ├── DateOnlyJsonConverter.cs      # JSON serialization support
+│   ├── RetryPolicyFactory.cs         # Polly retry policy factory
+│   ├── TestDataGenerator.cs          # Bogus-based test data generation
+│   └── TestNameEnricher.cs           # Serilog test name enrichment
+├── Properties/                 # Project properties and configuration
+│   ├── AssemblyInfo.cs                # NUnit parallel execution configuration
+│   ├── NUnit.Runners.reqnroll.json    # Reqnroll NUnit runner config
+│   └── reqnroll.json                  # Reqnroll runtime config
+└──  Features/                   # BDD feature files and auto-generated code
+    ├── Authentication.feature         # Gherkin feature file for authentication
+    ├── Authentication.feature.cs      # Auto-generated code for authentication feature
+    ├── Booking.feature                # Gherkin feature file for booking
+    └── Booking.feature.cs             # Auto-generated code for booking feature
 ```
 
 ### Test Categories
@@ -141,6 +151,12 @@ This project implements advanced parallel test execution for improved performanc
 - Thread-safe dependency injection
 - Service scoping per test
 - Authentication token isolation
+
+## BDD Testing with Reqnroll
+
+To enhance test clarity and collaboration, this project has adopted a Behavior-Driven Development (BDD) approach using [Reqnroll](https://reqnroll.net/). Traditional NUnit tests are being migrated to BDD scenarios written in Gherkin syntax, which are stored in `.feature` files. This approach provides living documentation that is understandable to both technical and non-technical stakeholders.
+
+The BDD implementation also supports scenario-level parallel execution, significantly reducing test suite run times. For a comprehensive explanation of the BDD setup, parallel execution configuration, and thread-safe dependency injection for scenarios, please see [REQNROLL_PARALLEL_EXECUTION.md](REQNROLL_PARALLEL_EXECUTION.md).
 
 ## Logging
 
