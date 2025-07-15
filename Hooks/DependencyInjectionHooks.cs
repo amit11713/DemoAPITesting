@@ -35,13 +35,16 @@ public class DependencyInjectionHooks
             testSetup.RunBeforeAnyTests();
         }
         
-        // Use the existing TestSetup.ServiceProvider instead of conflicting with Reqnroll's DI
-        _scope = TestSetup.ServiceProvider.CreateScope();
-        _scenarioContext.Set(_scope, "ServiceScope");
-        
-        var logger = _scope.ServiceProvider.GetRequiredService<ILogger<DependencyInjectionHooks>>();
-        logger.LogInformation("{Class}.{Method}: BeforeScenario - Service scope created for scenario '{ScenarioTitle}'", 
-            nameof(DependencyInjectionHooks), nameof(BeforeScenario), _scenarioContext.ScenarioInfo.Title);
+        // Use the existing TestSetup.ServiceProvider
+        _scope = TestSetup.ServiceProvider?.CreateScope();
+        if (_scope != null)
+        {
+            _scenarioContext.Set(_scope, "ServiceScope");
+            
+            var logger = _scope.ServiceProvider.GetRequiredService<ILogger<DependencyInjectionHooks>>();
+            logger.LogInformation("{Class}.{Method}: BeforeScenario - Service scope created for scenario '{ScenarioTitle}'", 
+                nameof(DependencyInjectionHooks), nameof(BeforeScenario), _scenarioContext.ScenarioInfo.Title);
+        }
     }
 
     /// <summary>
@@ -50,11 +53,14 @@ public class DependencyInjectionHooks
     [AfterScenario]
     public void AfterScenario()
     {
-        var logger = _scope?.ServiceProvider.GetRequiredService<ILogger<DependencyInjectionHooks>>();
-        logger?.LogInformation("{Class}.{Method}: AfterScenario - Disposing service scope for scenario '{ScenarioTitle}'", 
-            nameof(DependencyInjectionHooks), nameof(AfterScenario), _scenarioContext.ScenarioInfo.Title);
-        
-        _scope?.Dispose();
-        _scenarioContext.Remove("ServiceScope");
+        if (_scope != null)
+        {
+            var logger = _scope.ServiceProvider.GetRequiredService<ILogger<DependencyInjectionHooks>>();
+            logger?.LogInformation("{Class}.{Method}: AfterScenario - Disposing service scope for scenario '{ScenarioTitle}'", 
+                nameof(DependencyInjectionHooks), nameof(AfterScenario), _scenarioContext.ScenarioInfo.Title);
+            
+            _scope.Dispose();
+            _scenarioContext.Remove("ServiceScope");
+        }
     }
 }
