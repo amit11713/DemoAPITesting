@@ -1,0 +1,15 @@
+{
+  "reqnroll": {
+    "runtime": {
+      "parallel": {
+        "enabled": true,
+        "workers": 4,
+        "maxThreadCount": 8
+      }
+    },
+    "generator": {
+      "allowDebugGeneratedFiles": false,
+      "allowRowTests": true
+    }
+  }
+}

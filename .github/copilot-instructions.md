@@ -24,6 +24,13 @@
 - Authentication tokens must be created per test, not shared across fixtures.
 - Use the established pattern for dependency injection in test classes.
 
+## Reqnroll BDD Guidelines
+- Reqnroll has its own parallel execution capabilities configured in `reqnroll.json`.
+- For Reqnroll scenarios, use BeforeScenario/AfterScenario hooks for service scoping instead of NUnit SetUp/TearDown.
+- Maintain thread-safe service scoping in hooks using the same pattern as NUnit tests.
+- Use `ScenarioContext` for test-isolated state (replaces per-test variables).
+- Maintain thread ID logging for traceability in parallel execution.
+
 ## File/Folder Structure
 - Place all test classes in the `Tests` folder.
 - Place all API clients in the `Clients` folder.
@@ -31,6 +38,16 @@
 - Place all utility/helper classes in the `Utilities` folder.
 - Place all configuration classes in the `Configurations` folder.
 - Test categories: Use `[Category("Unit")]` for isolated tests, `[Category("Functional")]` for API integration tests.
+
+### Reqnroll BDD Structure
+- Place all feature files in the `Features` folder with descriptive names (e.g., `Authentication.feature`, `BookingManagement.feature`).
+- Use proper Gherkin syntax with Feature, Scenario, Given, When, Then structure.
+- Include meaningful descriptions for each Feature and Scenario.
+- Use tags to categorize scenarios (e.g., `@Authentication`, `@Functional`, `@Smoke`).
+- Place step definition files in the `StepDefinitions` folder.
+- Group related steps by feature or domain area.
+- Place hooks in a dedicated `Hooks` folder.
+- Use scoped hooks when possible (`[BeforeScenario("@Authentication")]`).
 
 ## Logging Requirements
 - Use Serilog for all logging with structured logging format.
@@ -53,6 +70,15 @@
 - Include appropriate XML documentation for all test methods.
 - Use meaningful test method names that describe the scenario being tested.
 
+### Reqnroll BDD Best Practices
+- Use context injection to share state between steps within a scenario.
+- Follow the same logging pattern as existing tests with class and method names.
+- Maintain parallel execution safety in all step definitions.
+- Follow the same service scoping pattern as existing tests in hooks.
+- Ensure proper cleanup in After hooks.
+- Use descriptive step names that clearly express business intent.
+- Keep step definitions focused on a single responsibility.
+
 ## Security & Best Practices
 - Never commit secrets or credentials to the repository.
 - Use dependency injection for all external dependencies.
@@ -64,6 +90,9 @@
 - Current major dependencies and their versions:
   - .NET 8.0 (target framework)
   - NUnit 4.2.2 (test framework)
+  - Reqnroll 2.4.1 (BDD framework)
+  - Reqnroll.NUnit 2.4.1 (NUnit integration for Reqnroll)
+  - Reqnroll.Microsoft.Extensions.DependencyInjection 2.4.1 (DI integration)
   - RestSharp 110.2.0 (HTTP client - has known vulnerability)
   - Polly 8.2.0 (resilience library)
   - Bogus 35.0.1 (test data generation)
